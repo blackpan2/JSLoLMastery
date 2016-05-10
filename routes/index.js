@@ -5,7 +5,8 @@ var moment = require("moment");
 var router = express.Router();
 
 LolApi.init(process.env.DEV_KEY, 'na');
-LolApi.setRateLimit(1500, 90000);
+// LolApi.setRateLimit(1500, 90000);
+LolApi.setRateLimit(10, 500);
 
 router.get('/', function (req, res) {
     res.render('index', {title: 'League Mastery'});
