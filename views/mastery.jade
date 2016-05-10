@@ -1,0 +1,77 @@
+extends layout
+
+block jumbotron
+    h1
+        span
+            img#summonerIcon.img-circle(src='#{summoner.iconURL}', alt = 'SummonerIcon')
+            span#upper #{summoner.name}
+
+block content
+    h3 Show: &nbsp;
+        .btn-group(role='group')
+            button#restrict-all.btn.btn-default(type='button', onclick='showAll()') All
+            //button#restrict-0.btn.btn-default(type='button', onclick='show0()') Not Started
+            button#restrict-1.btn.btn-default(type='button', onclick='show1()') Level 1
+            button#restrict-2.btn.btn-default(type='button', onclick='show2()') Level 2
+            button#restrict-3.btn.btn-default(type='button', onclick='show3()') Level 3
+            button#restrict-4.btn.btn-default(type='button', onclick='show4()') Level 4
+            button#restrict-5.btn.btn-default(type='button', onclick='show5()') Level 5
+    hr
+    each val in mastery
+        br.restrict-all(class="#{val.championLevel}", id="#{val.key}")
+        .panel.panel-default.restrict-all(class="restrict-#{val.championLevel}", role='button', data-toggle='collapse', href="#collapse-#{val.id}")
+            .panel-heading
+                .row
+                    .col-md-12
+                        h3.panel-title Champion: #{val.name}
+            .panel-body
+                .row
+                    .col-md-2
+                        img.championPicture.img-rounded(src='#{val.championPicture}' alt='#{val.key}')
+                    .col-md-8
+                        .row
+                            .col-md-6
+                                h4 Mastery Points:
+                                p.formatNumber3 #{val.championPoints}
+                            .col-md-6
+                                h4 Mastery Level:
+                                p #{val.championLevel}
+                        .row
+                            .col-md-6
+                                h4 Last Played:
+                                p #{val.lastPlayTime}
+                            .col-md-6
+                                h4 Points to next level:
+                                p.formatNumber3 #{val.championPointsUntilNextLevel}
+                    .col-md-2
+                        img.mastery-icon.img-responsive(src='#{val.masteryPicture}')
+        .collapse(id="collapse-#{val.id}")
+            .well
+                ul.nav.nav-tabs.nav-justified
+                    li.active
+                        a(data-toggle='tab', href="#home-#{val.id}") Information
+                    li
+                        a(data-toggle='tab', href="#menu1-#{val.id}") Lore
+                    //li
+                        //a(href=" {{ url_for('show_detail', champion_key=champion['key']) }}")
+                        //    | Skins
+                        //    | & Champion Spotlight
+                .tab-content
+                    .tab-pane.fade.in.active(id="home-#{val.id}")
+                        .row
+                            .col-md-4
+                                h3 Champion stats:
+                                a(href="http://champion.gg/champion/#{val.key}", target='_blank') Champion.GG
+                            .col-md-4
+                                h3 Recent Pro Builds:
+                                a(href="http://www.probuilds.net/champions/details/#{val.key}", target='_blank') ProBuilds.net
+                            .col-md-4
+                                h3 Ditch the Meta:
+                                a(href="http://offmeta.com/champion/#{val.key}", target='_blank') OffMeta.com
+                    .tab-pane.fade(id="menu1-#{val.id}")
+                        h3 Lore
+                        p !{val.lore}
+
+block script
+    script( src='javascripts/coreMastery.js')
+    script window.onload = function () {FormatNumberBy3Loop();};
