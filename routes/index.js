@@ -16,36 +16,6 @@ router.post('/', function (req, res) {
     res.status(302).redirect("/summoner=" + req.body.summoner);
 });
 
-function FormatNumberBy3(num) {
-    // check for missing parameters and use defaults if so
-    var sep = ",";
-    var decimal_point = ".";
-    // need a string for operations
-    num = num.toString();
-    // separate the whole number and the fraction if possible
-    var a = num.split(decimal_point);
-    var x = a[0]; // decimal
-    var y = a[1]; // fraction
-    var z = "";
-    if (typeof(x) != "undefined") {
-        // reverse the digits. regexp works from left to right.
-        for (var i = x.length - 1; i >= 0; i--)
-            z += x.charAt(i);
-        // add separators. but undo the trailing one, if there
-        z = z.replace(/(\d{3})/g, "$1" + sep);
-        if (z.slice(-sep.length) == sep)
-            z = z.slice(0, -sep.length);
-        x = "";
-        // reverse again to get back the number
-        for (i = z.length - 1; i >= 0; i--)
-            x += z.charAt(i);
-        // add the fraction back in, if it was there
-        if (typeof(y) != "undefined" && y.length > 0)
-            x += decimal_point + y;
-    }
-    return x;
-}
-
 function merge_options(obj1, obj2) {
     var obj3 = {};
     for (var attrName1 in obj1) {
@@ -100,13 +70,14 @@ router.get('/summoner=:summoner', function (req, res) {
                 for (var i = 0; i < tempChampions.length; i++) {
                     for (var j = 0; j < tempMastery.length; j++) {
                         if (tempChampions[i].id === tempMastery[j].championId) {
+                            // console.log(merge_options(tempChampions[i], tempMastery[j]));
                             masteryData.push(merge_options(tempChampions[i], tempMastery[j]));
                         }
                     }
                 }
                 masteryData = masteryData.sort(compare);
                 // console.log(summoner);
-                console.log(masteryData);
+                // console.log(masteryData);
                 res.render('mastery', {title: 'League Mastery', summoner: summoner, mastery: masteryData});
             });
         });
@@ -115,34 +86,3 @@ router.get('/summoner=:summoner', function (req, res) {
 
 
 module.exports = router;
-
-//
-// function FormatNumberBy3Loop() {
-//     var formatList = document.getElementsByClassName("formatNumber3");
-//     for (var i = 0; i < formatList.length; i++) {
-//         document.getElementsByClassName("formatNumber3")[i].innerHTML =
-//             FormatNumberBy3(formatList[i].innerHTML);
-//     }
-// }
-//
-// function championPicture() {
-//     var allChamps = document.getElementsByClassName("championPicture");
-//     for (var i = 0; i < allChamps.length; i++) {
-//         var name = allChamps[i].alt;
-//         document.getElementsByClassName("championPicture")[i].src = setChampionPicture(name);
-//     }
-// }
-//
-// function setChampionPicture(name) {
-//     return "http://ddragon.leagueoflegends.com/cdn/6.9.1/img/champion/".concat(name).concat(".png");
-// }
-//
-// function masteryIcon() {
-//     var allLevels = document.getElementsByClassName("mastery-icon");
-//     for (var i = 0; i < allLevels.length; i++) {
-//         var numeric = allLevels[i].alt;
-//         document.getElementsByClassName("mastery-icon")[i].src = "/static/images/tier" + numeric + ".png";
-//     }
-// }
-//
-

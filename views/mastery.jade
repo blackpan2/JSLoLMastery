@@ -18,7 +18,7 @@ block content
             button#restrict-5.btn.btn-default(type='button', onclick='show5()') Level 5
     hr
     each val in mastery
-        br.restrict-all(class="#{val.championLevel}", id="#{val.key}")
+        br.restrict-all(class="restrict-#{val.championLevel}", id="#{val.key}")
         .panel.panel-default.restrict-all(class="restrict-#{val.championLevel}", role='button', data-toggle='collapse', href="#collapse-#{val.id}")
             .panel-heading
                 .row
@@ -34,12 +34,12 @@ block content
                                 h4 Mastery Points:
                                 p.formatNumber3 #{val.championPoints}
                             .col-md-6
-                                h4 Mastery Level:
-                                p #{val.championLevel}
-                        .row
-                            .col-md-6
                                 h4 Last Played:
                                 p #{val.lastPlayTime}
+                        .row
+                            .col-md-6
+                                h4 Mastery Level:
+                                p #{val.championLevel}
                             .col-md-6
                                 h4 Points to next level:
                                 p.formatNumber3 #{val.championPointsUntilNextLevel}
@@ -74,4 +74,7 @@ block content
 
 block script
     script( src='javascripts/coreMastery.js')
-    script window.onload = function () {FormatNumberBy3Loop();};
+    script.
+        window.onload = function () {
+            FormatNumberBy3Loop()
+        };
