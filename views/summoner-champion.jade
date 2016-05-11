@@ -1,0 +1,12 @@
+extends layout
+
+//block jumbotron
+    //h1
+        //span
+            img#summonerIcon.img-circle(src='#{summoner.iconURL}', alt = 'SummonerIcon')
+            span#upper #{summoner.name}
+
+block content
+    .alert.alert-warning(role='alert')
+        p.
+            This page is under development come back later

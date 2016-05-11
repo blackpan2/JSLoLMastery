@@ -92,8 +92,8 @@ router.get('/summoner=:summoner', function (req, res) {
     });
 });
 
-router.get('/summoner=:summoner/champion=:chmampion', function (req, res) {
-    res.render('index', {title: 'League Mastery'});
+router.get('/summoner=:summoner/champion=:champion', function (req, res) {
+    res.render('summoner-champion', {title: req.params.summoner + " " + req.params.champion });
 });
 
 module.exports = router;
