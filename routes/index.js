@@ -42,7 +42,7 @@ router.get('/summoner=:summoner', function (req, res) {
     LolApi.Summoner.getByName(req.params.summoner, function (err) {
         if (err) {
             console.log(err);
-            res.render('summoner-notfound', {title: 'League Mastery', name: req.params.summoner});
+            res.render('summoner-notfound', {title: 'Not found', name: req.params.summoner});
         }
         if (!err) {
             LolApi.Summoner.getByName(req.params.summoner).then(function (summoner) {
@@ -81,7 +81,7 @@ router.get('/summoner=:summoner', function (req, res) {
                         }
                         masteryData = masteryData.sort(compare);
                         res.render('summoner-mastery', {
-                            title: 'League Mastery',
+                            title: "League Mastery: " + summoner.name,
                             summoner: summoner,
                             mastery: masteryData
                         });
@@ -90,6 +90,10 @@ router.get('/summoner=:summoner', function (req, res) {
             })
         }
     });
+});
+
+router.get('/summoner=:summoner/champion=:chmampion', function (req, res) {
+    res.render('index', {title: 'League Mastery'});
 });
 
 module.exports = router;

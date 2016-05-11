@@ -7,22 +7,21 @@ block jumbotron
             span#upper #{summoner.name}
 
 block content
-    h3 Show: &nbsp;
-        .btn-group(role='group')
-            button#restrict-all.btn.btn-default(type='button', onclick='showAll()') All
-            //button#restrict-0.btn.btn-default(type='button', onclick='show0()') Not Started
-            button#restrict-1.btn.btn-default(type='button', onclick='show1()') Level 1
-            button#restrict-2.btn.btn-default(type='button', onclick='show2()') Level 2
-            button#restrict-3.btn.btn-default(type='button', onclick='show3()') Level 3
-            button#restrict-4.btn.btn-default(type='button', onclick='show4()') Level 4
-            button#restrict-5.btn.btn-default(type='button', onclick='show5()') Level 5
+    h3 Show:
+    .btn-group(role='group')
+        button#restrict-all.btn.btn-default(type='button', onclick='showAll()') All
+        button#restrict-1.btn.btn-default(type='button', onclick='show1()') Level 1
+        button#restrict-2.btn.btn-default(type='button', onclick='show2()') Level 2
+        button#restrict-3.btn.btn-default(type='button', onclick='show3()') Level 3
+        button#restrict-4.btn.btn-default(type='button', onclick='show4()') Level 4
+        button#restrict-5.btn.btn-default(type='button', onclick='show5()') Level 5
     hr
     each val in mastery
         br.restrict-all(class="restrict-#{val.championLevel}", id="#{val.key}")
         .panel.panel-default.restrict-all(class="restrict-#{val.championLevel}", role='button', data-toggle='collapse', href="#collapse-#{val.id}")
             .panel-heading
                 .row
-                    .col-md-12
+                    .col-sm-12
                         h3.panel-title Champion: #{val.name}
             .panel-body
                 .row
@@ -44,7 +43,7 @@ block content
                                 h4 Points to next level:
                                 p.formatNumber3 #{val.championPointsUntilNextLevel}
                     .col-md-2
-                        img.mastery-icon.img-responsive(src='#{val.masteryPicture}')
+                        img.mastery-icon.img-responsive(src='#{val.masteryPicture}' alt='#{val.championLevel}')
         .collapse(id="collapse-#{val.id}")
             .well
                 ul.nav.nav-tabs.nav-justified
@@ -52,10 +51,9 @@ block content
                         a(data-toggle='tab', href="#home-#{val.id}") Information
                     li
                         a(data-toggle='tab', href="#menu1-#{val.id}") Lore
-                    //li
-                        //a(href=" {{ url_for('show_detail', champion_key=champion['key']) }}")
-                        //    | Skins
-                        //    | & Champion Spotlight
+                    li
+                        a(href="/summoner=#{summoner.name}/champion=#{val.key}")
+                            | Skins & Champion Spotlight
                 .tab-content
                     .tab-pane.fade.in.active(id="home-#{val.id}")
                         .row

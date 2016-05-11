@@ -6,6 +6,12 @@ block jumbotron
         See how you're doing on a champion and find resources to help you improve.
 
 block content
+    .alert.alert-warning.alert-dismissible(role='alert')
+        button.close(type='button', data-dismiss='alert', aria-label='Close')
+            span(aria-hidden='true') ×
+        p.
+            Be aware of delays as we are currently running on a development
+            key so there might be delays in loading pages
     .row.marketing
         .col-lg-6
             h4 History
