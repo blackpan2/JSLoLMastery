@@ -68,6 +68,7 @@ function compare(a, b) {
 }
 
 router.get('/summoner=:summoner', function (req, res) {
+    console.log('Going to ' + req.params.summoner);
     var masteryData = [];
     var tempMastery = [];
     var tempChampions = [];
