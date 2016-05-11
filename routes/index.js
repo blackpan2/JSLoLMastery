@@ -4,9 +4,9 @@ var moment = require("moment");
 
 var router = express.Router();
 
-LolApi.init(process.env.DEV_KEY, 'na');
-// LolApi.setRateLimit(1500, 90000);
-LolApi.setRateLimit(10, 500);
+LolApi.init(process.env.DEV_KEY, 'na'); // Dev key is stored in environment for protection
+// LolApi.setRateLimit(1500, 90000); // When using a Riot production key
+LolApi.setRateLimit(10, 500); // When using a Riot development key
 
 router.get('/', function (req, res) {
     res.render('index', {title: 'League Mastery'});
@@ -38,51 +38,58 @@ function compare(a, b) {
 }
 
 router.get('/summoner=:summoner', function (req, res) {
-    console.log('Going to ' + req.params.summoner);
-    var masteryData = [];
-    var tempMastery = [];
-    var tempChampions = [];
-    LolApi.Summoner.getByName(req.params.summoner).then(function (summoner) {
-        summoner = summoner[Object.keys(summoner)[0]];
-        var str = summoner.name;
-        var first = str.slice(0, 1).toUpperCase();
-        var second = str.slice(1).toLowerCase();
-        summoner.name = first + second;
-        summoner.iconURL = 'http://ddragon.leagueoflegends.com/cdn/6.9.1/img/profileicon/' + summoner.profileIconId + '.png';
-        LolApi.ChampionMastery.getChampions(summoner.id).then(function (mastery) {
-            tempMastery = mastery;
-            for (var mast in tempMastery) {
-                tempMastery[mast]['masteryPicture'] = "/images/tier" + tempMastery[mast]['championLevel'] + ".png";
-                tempMastery[mast]['lastPlayTime'] = moment(tempMastery[mast]['lastPlayTime']).format("MMM DD YYYY, h:mm a");
-            }
-        }).then(function () {
-            var options = {champData: 'lore', locale: 'en_US'};
-            LolApi.Static.getChampionList(options).then(function (championList) {
-                // console.log(Object.keys(championList.data));
-                tempChampions = Object.keys(championList.data).map(function (key) {
-                    return championList.data[key]
-                });
-                for (var champ in tempChampions) {
-                    tempChampions[champ]['championPicture'] = "http://ddragon.leagueoflegends.com/cdn/6.9.1/img/champion/"
-                        + tempChampions[champ].key + ".png";
-                }
-            }).then(function () {
-                for (var i = 0; i < tempChampions.length; i++) {
-                    for (var j = 0; j < tempMastery.length; j++) {
-                        if (tempChampions[i].id === tempMastery[j].championId) {
-                            // console.log(merge_options(tempChampions[i], tempMastery[j]));
-                            masteryData.push(merge_options(tempChampions[i], tempMastery[j]));
-                        }
+    console.log("Going to: '" + req.params.summoner + "'");
+    LolApi.Summoner.getByName(req.params.summoner, function (err) {
+        if (err) {
+            console.log(err);
+            res.render('summoner-notfound', {title: 'League Mastery', name: req.params.summoner});
+        }
+        if (!err) {
+            LolApi.Summoner.getByName(req.params.summoner).then(function (summoner) {
+                var masteryData = [];
+                var tempMastery = [];
+                var tempChampions = [];
+                summoner = summoner[Object.keys(summoner)[0]];
+                var str = summoner.name;
+                var first = str.slice(0, 1).toUpperCase();
+                var second = str.slice(1).toLowerCase();
+                summoner.name = first + second;
+                summoner.iconURL = 'http://ddragon.leagueoflegends.com/cdn/6.9.1/img/profileicon/' + summoner.profileIconId + '.png';
+                LolApi.ChampionMastery.getChampions(summoner.id).then(function (mastery) {
+                    tempMastery = mastery;
+                    for (var mast in tempMastery) {
+                        tempMastery[mast]['masteryPicture'] = "/images/tier" + tempMastery[mast]['championLevel'] + ".png";
+                        tempMastery[mast]['lastPlayTime'] = moment(tempMastery[mast]['lastPlayTime']).format("MMM DD YYYY, h:mm a");
                     }
-                }
-                masteryData = masteryData.sort(compare);
-                // console.log(summoner);
-                // console.log(masteryData);
-                res.render('mastery', {title: 'League Mastery', summoner: summoner, mastery: masteryData});
-            });
-        });
+                }).then(function () {
+                    var options = {champData: 'lore', locale: 'en_US'};
+                    LolApi.Static.getChampionList(options).then(function (championList) {
+                        tempChampions = Object.keys(championList.data).map(function (key) {
+                            return championList.data[key]
+                        });
+                        for (var champ in tempChampions) {
+                            tempChampions[champ]['championPicture'] = "http://ddragon.leagueoflegends.com/cdn/6.9.1/img/champion/"
+                                + tempChampions[champ].key + ".png";
+                        }
+                    }).then(function () {
+                        for (var i = 0; i < tempChampions.length; i++) {
+                            for (var j = 0; j < tempMastery.length; j++) {
+                                if (tempChampions[i].id === tempMastery[j].championId) {
+                                    masteryData.push(merge_options(tempChampions[i], tempMastery[j]));
+                                }
+                            }
+                        }
+                        masteryData = masteryData.sort(compare);
+                        res.render('summoner-mastery', {
+                            title: 'League Mastery',
+                            summoner: summoner,
+                            mastery: masteryData
+                        });
+                    });
+                });
+            })
+        }
     });
 });
-
 
 module.exports = router;
